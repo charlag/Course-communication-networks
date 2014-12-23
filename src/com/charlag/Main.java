@@ -1,20 +1,17 @@
 package com.charlag;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-
 public class Main {
 
     static final int MAX = 9;
     static final int[] ni = { // aka ni
-            2661,
-            2153,
-            1605,
-            398,
-            1478,
-            2296,
-            4235,
-            1955,
+            3890,
+            3448,
+            3836,
+            3242,
+            3773,
+            3228,
+            3779,
+            2327,
             0,
             0,
             0,
@@ -39,9 +36,28 @@ public class Main {
                     {MAX, MAX, MAX, MAX, MAX, 1, MAX, 1, 1, 1, 1, 0},         //12
             };
 
+    // ToDo: Распределение задержки.
+    static int[][] time =
+            {
+                {0, MAX, MAX, MAX, MAX, MAX, MAX, MAX, 20, MAX, MAX, MAX}, //1
+                {MAX, 0, MAX, MAX, MAX, MAX, MAX, MAX, MAX, 20, MAX, MAX}, //2
+                {MAX, MAX, 0, MAX, MAX, MAX, MAX, MAX, 20, MAX, MAX, MAX}, //3
+                {MAX, MAX, MAX, 0, MAX, MAX, MAX, MAX, MAX, 1, MAX, MAX}, //4
+                {MAX, MAX, MAX, MAX, 0, MAX, MAX, MAX, MAX, MAX, 1, MAX}, //5
+                {MAX, MAX, MAX, MAX, MAX, 0, MAX, MAX, MAX, MAX, MAX, 1}, //6
+                {MAX, MAX, MAX, MAX, MAX, MAX, 0, MAX, MAX, MAX, 1, MAX}, //7
+                {MAX, MAX, MAX, MAX, MAX, MAX, MAX, 0, MAX, MAX, MAX, 1}, //8
+                {1, MAX, 1, MAX, MAX, MAX, MAX, MAX, 0, 1, 1, 1},         //9
+                {MAX, 1, MAX, 1, MAX, MAX, MAX, MAX, 1, 0, 1, 1},         //10
+                {MAX, MAX, MAX, MAX, 1, MAX, 1, MAX, 1, 1, 0, 1},         //11
+                {MAX, MAX, MAX, MAX, MAX, 1, MAX, 1, 1, 1, 1, 0},         //12
+            };
+
     static int[][] history_matrix = new int[12][12];
 
     static double[][] summ_matrix = new double[12][12];
+
+    static int[][] path_length = new int[12][12];
 
     static final int L0 = 200;
 
@@ -92,14 +108,14 @@ public class Main {
                 }
             }
         }
-        System.out.println("Минимальные пути");
+        System.out.println("Минимальные пути: ");
         for (int i = 0; i < 12; i++) {
             for (int j = 0; j < 12; j++) {
                 System.out.print(weight_matrix[i][j] + " ");
             }
             System.out.println();
         }
-        System.out.println("Матрица предков");
+        System.out.println("Матрица предков: ");
         System.out.print("   ");
         for (int i = 0; i < 12; i++)
             System.out.print((i + 1) + " ");
@@ -148,7 +164,7 @@ public class Main {
             System.out.println();
         }
 
-        System.out.println("Интенсивность траффика: ");
+        System.out.println("Количество каналов: ");
         int[][] v_arr = new int[12][12];
         for (int i = 0; i < 12; i++) {
             for (int j = 0; j < 12; j++) {
@@ -156,13 +172,28 @@ public class Main {
                 if (v_arr[i][j] == 1)
                     v_arr[i][j] = 0;
                 System.out.print(v_arr[i][j] + " ");
+            }
+            System.out.println();
+        }
+        System.out.println("Распределение по времени: ");
+        for (int i = 0; i < 12; i++) {
+            for (int j = 0; j < 12; j++) {
+                System.out.print(T / (double)weight_matrix[i][j] + " ");
+            }
+            System.out.println();
+        }
+        System.out.println();
+        System.out.println("Интенсивность траффика: ");
+
+        for (int i = 0; i < 12; i++) {
+            for (int j = 0; j < 12; j++) {
                 v_arr[i][j] *= 85000;
+                System.out.print(v_arr[i][j] + " ");
             }
             System.out.println();
         }
 
         System.out.println();
-
         System.out.println("Интенсивность поступления заявок: ");
         double[][] lambda = new double[12][12];
         for (int i = 0; i < 12; i++) {
@@ -179,7 +210,7 @@ public class Main {
         System.out.println("Интенсивность обслуживания: ");
         for (int i = 0; i < 12; i++) {
             for (int j = 0; j < 12; j++) {
-                mu[i][j] = 1/(double)T + lambda[i][j];
+                mu[i][j] = weight_matrix[i][j]/(double)T + lambda[i][j];
                 System.out.print(mu[i][j] + " ");
             }
             System.out.println();
@@ -224,7 +255,7 @@ public class Main {
         if (i > 1) {
             return i - 1;
         }
-        return 1;
+        return 0;
     }
 
 }
